@@ -1,0 +1,58 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-home",
+      "description": "Business team in a meeting discussing charts on a whiteboard.",
+      "imageUrl": "https://images.unsplash.com/photo-1758691736067-b309ee3ef7b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxidXNpbmVzcyUyMG1lZXRpbmclMjBwcmVzZW50YXRpb258ZW58MHx8fHwxNzcwMTQ5MTM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "business meeting presentation"
+    },
+    {
+      "id": "why-ipsobell",
+      "description": "Overhead shot of a diverse team working together at a large table.",
+      "imageUrl": "https://images.unsplash.com/photo-1624237489159-9dc263f9cc86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx0ZWFtJTIwd29ya2luZyUyMG9mZmljZXxlbnwwfHx8fDE3NzAxNDkxMzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "team working office"
+    },
+    {
+      "id": "why-choose",
+      "description": "A person holding a coffee cup and looking at a colorful magazine or report.",
+      "imageUrl": "https://images.unsplash.com/photo-1691643158804-d3f02eb456a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXRhJTIwYW5hbHlzaXMlMjBjaGFydHN8ZW58MHx8fHwxNzcwMTQ5MTM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "data analysis charts"
+    },
+    {
+      "id": "testimonial-1",
+      "description": "Avatar for Sarah Johnson.",
+      "imageUrl": "https://i.pravatar.cc/150?img=1",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "testimonial-2",
+      "description": "Avatar for Michael Chen.",
+      "imageUrl": "https://i.pravatar.cc/150?img=2",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "testimonial-3",
+      "description": "Avatar for Jessica Williams.",
+      "imageUrl": "https://i.pravatar.cc/150?img=3",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "testimonial-4",
+      "description": "Avatar for David Brown.",
+      "imageUrl": "https://i.pravatar.cc/150?img=4",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "testimonial-5",
+      "description": "Avatar for Emily Jones.",
+      "imageUrl": "https://i.pravatar.cc/150?img=5",
+      "imageHint": "smiling woman"
+    },
+    {
+      "id": "testimonial-6",
+      "description": "Avatar for Chris Miller.",
+      "imageUrl": "https://i.pravatar.cc/150?img=6",
+      "imageHint": "portrait man"
+    }
+  ]
+}

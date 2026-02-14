@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Opinion Insights Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial; background:#f4f6f9; padding:40px; }
+    h2 { margin-top:40px; }
+    .card { background:#fff; padding:20px; margin-bottom:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    button { padding:8px 14px; border:none; border-radius:6px; cursor:pointer; }
+    .btn { background:#2563eb; color:#fff; }
+    .danger { background:#dc2626; color:#fff; }
+    input, select { padding:8px; margin-right:10px; }
+    table { width:100%; border-collapse: collapse; margin-top:20px;}
+    th, td { padding:10px; border-bottom:1px solid #ddd; }
+    .status-active { color:green; font-weight:bold; }
+    .status-inactive { color:red; font-weight:bold; }
+    .linkbox { font-size:12px; color:#555; }
+  </style>
+</head>
+<body>
+
+<h1>Opinion Insights Admin</h1>
+
+<div class="card">
+  <h2>Add Client</h2>
+  <input id="clientName" placeholder="Client Name">
+  <button class="btn" onclick="addClient()">Add Client</button>
+</div>
+
+<div class="card">
+  <h2>Add Project</h2>
+  <select id="clientSelect"></select>
+  <input id="projectName" placeholder="Project Name">
+  <button class="btn" onclick="addProject()">Add Project</button>
+</div>
+
+<div class="card">
+  <h2>Projects</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th>Client</th>
+        <th>Status</th>
+        <th>Completes</th>
+        <th>Terminate</th>
+        <th>Tracking Link</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="projectTable"></tbody>
+  </table>
+</div>
+
+<script>
+const SUPABASE_URL = "https://pwqbmnwcocrywdoirwqm.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3cWJtbndjb2NyeXdkb2lyd3FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5NTM1NjYsImV4cCI6MjA4NjUyOTU2Nn0.0yMhoPrbKdVEtd5ur5c9fnYbBXvzWWEUZjJ1WVQoE08";
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadClients() {
+  const { data } = await db.from("clients").select("*");
+  const select = document.getElementById("clientSelect");
+  select.innerHTML = "";
+  data.forEach(c => {
+    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+  });
+}
+
+async function addClient() {
+  const name = document.getElementById("clientName").value;
+  if (!name) return alert("Enter client name");
+  await db.from("clients").insert([{ name }]);
+  document.getElementById("clientName").value="";
+  loadClients();
+}
+
+async function addProject() {
+  const name = document.getElementById("projectName").value;
+  const client_id = document.getElementById("clientSelect").value;
+  if (!name) return alert("Enter project name");
+
+  await db.from("projects").insert([
+    { name, client_id, status:"active" }
+  ]);
+
+  document.getElementById("projectName").value="";
+  loadProjects();
+}
+
+async function toggleStatus(id, current) {
+  const newStatus = current === "active" ? "inactive" : "active";
+  await db.from("projects").update({ status:newStatus }).eq("id", id);
+  loadProjects();
+}
+
+async function loadProjects() {
+  const { data } = await db.from("projects").select("*, clients(name)");
+  const table = document.getElementById("projectTable");
+  table.innerHTML="";
+
+  for (const p of data) {
+
+    const { count:completeCount } = await db
+      .from("responses")
+      .select("*", { count:"exact", head:true })
+      .eq("project_id", p.id)
+      .eq("status","complete");
+
+    const { count:terminateCount } = await db
+      .from("responses")
+      .select("*", { count:"exact", head:true })
+      .eq("project_id", p.id)
+      .eq("status","terminate");
+
+    const link = `${window.location.origin}/complete?pid=${p.id}&uid=TEST`;
+
+    table.innerHTML += `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.clients?.name || "-"}</td>
+        <td class="status-${p.status}">${p.status}</td>
+        <td>${completeCount || 0}</td>
+        <td>${terminateCount || 0}</td>
+        <td class="linkbox">${link}</td>
+        <td>
+          <button onclick="toggleStatus('${p.id}','${p.status}')">
+            ${p.status === "active" ? "Deactivate" : "Activate"}
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+loadClients();
+loadProjects();
+</script>
+
+</body>
+</html>
