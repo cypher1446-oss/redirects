@@ -1,58 +1,30 @@
-import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
-export async function GET(request: NextRequest) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const code = searchParams.get("code");
+  const uid = searchParams.get("uid");
 
-  const { searchParams } = new URL(request.url)
-  const projectId = searchParams.get("pid")
-  const uid = searchParams.get("uid")
-
-  if (!projectId || !uid) {
-    return NextResponse.json(
-      { message: "Missing pid or uid" },
-      { status: 400 }
-    )
+  if (!code || !uid) {
+    return new NextResponse("Missing parameters", { status: 400 });
   }
 
-  const forwarded = request.headers.get("x-forwarded-for")
-  const ip = forwarded ? forwarded.split(",")[0] : "unknown"
-  const userAgent = request.headers.get("user-agent") || "unknown"
+  const { data: project } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("project_code", code)
+    .single();
 
-  const startTime = new Date()
-  const endTime = new Date()
-
-  const durationSeconds =
-    Math.floor((endTime.getTime() - startTime.getTime()) / 1000)
-
-  const { data, error } = await supabase
-    .from("responses")
-    .insert([
-      {
-        project_id: projectId,
-        uid,
-        status: "complete",
-        ip,
-        user_agent: userAgent,
-        start_time: startTime,
-        end_time: endTime,
-        duration_seconds: durationSeconds
-      }
-    ])
-    .select()
-    .single()
-
-  if (error) {
-    return NextResponse.json(
-      { message: error.message },
-      { status: 500 }
-    )
+  if (!project) {
+    return new NextResponse("Project not found", { status: 404 });
   }
 
-  return NextResponse.redirect(
-    `${request.nextUrl.origin}/result/${data.id}`
-  )
+  await supabase.from("responses").insert({
+    project_id: project.id,
+    uid,
+    status: "complete"
+  });
+
+  return new NextResponse("Thank you for completing the survey.");
 }
